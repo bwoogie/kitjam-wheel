@@ -8,31 +8,63 @@
   <style type="text/css">
     html,
     body {
-      background: pink;
+      background: #FFFFFF;
       margin: 0;
       padding: 0;
       font-family: sans-serif;
     }
 
     #captcha-container {
-      background: white;
+      background: #FFFFFF;
       width: 390px;
       height: 300px;
     }
 
     /* Your style here... */
+    #puzzle {
+      margin: 0 auto;
+    }
+
+    .letterBox {
+      width: 21px;
+      height: 26px;
+      border: 3px solid black;
+      color: rgb(22, 22, 22);
+      font-size: 16px;
+      margin: 2px;
+      display: inline-block;
+      text-transform: uppercase;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .unsolvedBox {
+      background-color: rgb(227, 233, 229);
+    }
+
+    .solvedBox {
+      background-color: rgb(239, 248, 186);
+    }
+    
+    .emptyBox {
+      background-color: rgb(24, 102, 24);
+    }
   </style>
 </head>
 
 <body>
   <div id="captcha-container">
     <!-- Add your CAPTCHA here: -->
-    Hello world!
-
-    <!-- We've added a sample button. Feel free to remove it: -->
-    <button id="solve">
-      Solve!
-    </button>
+    <div id="puzzle">
+      <div id="row0"></div>
+      <div id="row1"></div>
+      <div id="row2"></div>
+      <div id="row3"></div>
+    </div>
+    <div id="debug"></div>
+    <div id="guessed-letter"></div>
+    <button id="spin-button">Spin</button>
+    <button id="solve-button">Solve</button>
   </div>
 
   <script type="text/javascript">
@@ -43,9 +75,196 @@
       }
 
       // Your CAPTCHA code goes here, we've added a simple example below:
-      document.getElementById('solve')
-           .addEventListener('click', () => captchaSuccess());
+      //document.getElementById('solve').addEventListener('click', () => captchaSuccess());
 
+      //each word will take the whole row so limited to 4 words and max 12 characters each.
+      const puzzles = ["i love miller", "dog kisser", "poggers", "chrisp", "each and everything", "do one thing", "any smilers?"];
+
+      let spinsRemaining = 3;
+      let puzzleAnswer = "";
+      let correctLetters = [];
+      let playerGuess = []; //keep what the player types separate from the correct letters
+      let typeIndex = 0;
+
+      const totalColumns = 12;
+      const puzzleLetterIds = [];
+      const puzzle = document.getElementById("puzzle");
+
+      const guessedLetter = document.getElementById("guessed-letter");
+      const spinButton = document.getElementById("spin-button");
+      const solveButton = document.getElementById("solve-button");
+      
+      const debug = document.getElementById("debug");
+
+      spinButton.addEventListener('click', spin);
+      solveButton.addEventListener('click', checkWin);
+
+      //get letter box from  row/col position
+      function getIndex(row, column) {
+        return row * totalColumns + column;
+      }
+
+      function generatePuzzle() {
+        correctLetters.length = 0;
+        playerGuess.length = 0;
+
+        //build empty puzzle board
+        for(let row = 0; row < 4; row++){
+          for(let col = 0; col < totalColumns; col++) {
+            const newDiv = document.createElement('div');
+            newDiv.id = "box" + getIndex(row, col);
+            newDiv.className = "letterBox";
+            newDiv.classList.add('emptyBox');
+            puzzle.appendChild(newDiv);
+          }
+        }
+
+        //choose a puzzle and place it on the board
+        puzzleAnswer = puzzles[Math.floor(Math.random() * puzzles.length)];
+        
+        //do the math to center the letters on the board
+        let splitAnswer = puzzleAnswer.split(' ');
+        console.log("expected rows: " + splitAnswer.length);
+        let longest = 0;
+        let colOffset = 0;
+
+        splitAnswer.forEach(function(line){
+          if(line.length > longest) {
+            longest = line.length;
+          }
+        });
+
+        console.log("longest line: " + longest);
+
+        colOffset = Math.floor((totalColumns / 2) - (longest / 2)); //center horizontally
+        
+        console.log("colOffset = " + colOffset);
+
+        let row = Math.floor((4/2) - (splitAnswer.length / 2)); //center vertically
+        let col = colOffset;
+
+          for(let i = 0; i < puzzleAnswer.length; i++) {
+            if(puzzleAnswer[i] == " ") { //if the character is a space drop to the next row
+              row++;
+              col = colOffset;
+              continue;
+            }
+
+            if(puzzleAnswer[i] == puzzleAnswer[i].match(/[^a-zA-Z]/g)) { //if the character is non alpha add it as solved
+              let id = "box"+getIndex(row, col);
+              puzzleLetterIds.push(id);
+              const curBox = document.getElementById(id);
+              
+              curBox.classList.remove('emptyBox');
+              curBox.classList.add('solvedBox');  
+              curBox.textContent = puzzleAnswer[i];
+              continue;
+            }
+
+            correctLetters.push("_");
+            playerGuess.push("_");
+
+            let id = "box"+getIndex(row, col);
+            puzzleLetterIds.push(id);
+            const curBox = document.getElementById(id);
+            
+            curBox.classList.remove('emptyBox');
+            curBox.classList.add('unsolvedBox');
+            col++;
+          }
+          
+        
+          puzzleAnswer = puzzleAnswer.replaceAll(/[^a-zA-Z]/g, '') //remove all non alphabet characters
+          debug.textContent = puzzleAnswer;
+        }
+      function testLetter(letter) {
+        for(let i = 0; i < puzzleAnswer.length; i++) {
+          if (puzzleAnswer[i] == letter) {
+            const box = document.getElementById(puzzleLetterIds[i]);
+            box.textContent = letter;
+            correctLetters[i] = puzzleAnswer[i]; //keep track of correct letters
+          }
+        }
+      }
+
+      function updateBoard() {
+        console.log("Correct: " + correctLetters.join('') + "  // Player Typed: " + playerGuess.join(''));
+        for(let i = 0; i < puzzleAnswer.length; i++) {
+          const box = document.getElementById(puzzleLetterIds[i]);
+          if (correctLetters[i] != "_") {
+            box.textContent = correctLetters[i];
+          } else if(playerGuess[i] != "_") {
+            box.textContent = playerGuess[i];
+          } else {
+            box.textContent = "";
+          }
+        }
+      }
+
+      function spin() {
+        const randomNumber = Math.floor(Math.random() * 26);
+        const charCode = randomNumber + 97;
+        const g = String.fromCharCode(charCode);
+        guessedLetter.textContent = g;
+        testLetter(g);
+        checkWin();
+      }
+
+      function checkWin() {
+
+        //combine both letter arrays (letters we got from spinning and letters we typed in) into one
+        let combined = [];
+        for(let i = 0; i < correctLetters.length; i++) {
+          if(correctLetters[i] != "_") {
+            combined.push(correctLetters[i]);
+          }else if(playerGuess[i] != "_") {
+            combined.push(playerGuess[i]);
+          }
+        }
+
+        //compare
+        if(combined.join('') === puzzleAnswer) {
+          debug.textContent = "you are winner";
+          setTimeout(() => captchaSuccess(), 2000);
+        }
+      }
+
+      function getNextBlankSpace() {
+        for(let i = 0; i < puzzleAnswer.length; i++) {
+          if(correctLetters[i] == "_" && playerGuess[i] == "_") return i;
+        }
+
+        return -1; //didn't find a blank space (to write your name).
+      }
+
+      document.addEventListener("keyup", (event) => {
+        const pressedKey = event.key.toLowerCase();
+        typeIndex = getNextBlankSpace();
+
+        if(pressedKey.match(/[^a-zA-Z]/g) != null) { //must be a letter
+          //TODO animate invalid key?
+          console.log("must be a letter. ");
+          return;
+        } else if(event.key === 'Backspace' || event.code === 'Backspace' || event.keyCode === 8) {
+          for(let i = playerGuess.length - 1; i >= 0; i--) {
+            console.log(i);
+            if(playerGuess[i] != "_") {
+              console.log("removing " + playerGuess[i]);
+              playerGuess[i] = "_";
+              break;
+            }
+          }
+        } else {
+          playerGuess[typeIndex] = pressedKey;
+        }
+        
+        
+
+        updateBoard();
+
+      });
+
+      generatePuzzle();
     })(window, document);
   </script>
 </body>
