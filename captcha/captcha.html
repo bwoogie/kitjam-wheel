@@ -5,6 +5,11 @@
   <title>Joel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  
+
   <style type="text/css">
     html,
     body {
@@ -12,15 +17,19 @@
       margin: 0;
       padding: 0;
       font-family: sans-serif;
+      overflow: hidden;
     }
 
     #captcha-container {
-      background: #FFFFFF;
+      
       width: 390px;
       height: 300px;
+      overflow: hidden;
     }
 
     /* Your style here... */
+ 
+    
     #puzzle {
       margin: 0 auto;
     }
@@ -30,12 +39,18 @@
       height: 26px;
       border: 3px solid black;
       color: rgb(22, 22, 22);
-      font-size: 16px;
       margin: 2px;
       display: inline-block;
       text-transform: uppercase;
       text-align: center;
       overflow: hidden;
+      font-size: 24px;
+      font-family: "Roboto", sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 900;
+      font-style: normal;
+      font-variation-settings:
+        "wdth" 100;
     }
 
     .unsolvedBox {
@@ -49,6 +64,77 @@
     .emptyBox {
       background-color: rgb(24, 102, 24);
     }
+
+    @keyframes letter-box-bounce {
+      0%, 100% {
+        transform: translateY(0px);
+      }
+      50%{
+        transform: translateY(16px);
+      }
+      75% {
+        transform: translateY(-8px);
+      }
+    }
+/*
+    #wheel-container {
+      overflow: hidden;
+      position: absolute;
+      top: 140px;
+      left: 0px;
+      
+    }
+*/
+  #wheel-container {
+    position: absolute;
+    overflow: hidden;
+    top:140px;
+    width: 390px;
+    height: 390px;
+    background: url("wheel.png");
+    /*animation: wheel-forever 6000ms infinite;*/
+    transition: transform 6s ease;
+  }
+ /* #wheel-container:before {
+    content: "";
+    position: absolute;
+    width: 290px;
+    height: 290px;
+    top: -50%;
+    left: -50%;
+    z-index: 1;
+    background: url("wheel.png");
+    transform: rotate(30deg);
+}*/
+
+    #wheel-img {
+      width: 390px;
+      /*animation: wheel-forever 6000ms infinite;*/
+    }
+
+    @keyframes wheel-forever {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(1080deg);
+      }
+    }
+
+    button {
+      background-color: #dd1f1f;
+    }
+
+    #spin-button {
+      position: absolute;
+      top: 200px;
+    }
+
+    #solve-button {
+      position: absolute;
+      top: 200px;
+      left: 300px;
+    }
   </style>
 </head>
 
@@ -61,9 +147,9 @@
       <div id="row2"></div>
       <div id="row3"></div>
     </div>
-    <div id="debug"></div>
-    <div id="guessed-letter"></div>
-    <button id="spin-button">Spin</button>
+    <div id="money">$0</div>
+    <div id="wheel-container"></div>
+    <button id="spin-button" >Spin</button>
     <button id="solve-button">Solve</button>
   </div>
 
@@ -78,31 +164,45 @@
       //document.getElementById('solve').addEventListener('click', () => captchaSuccess());
 
       //each word will take the whole row so limited to 4 words and max 12 characters each.
-      const puzzles = ["i love miller", "dog kisser", "poggers", "chrisp", "each and everything", "do one thing", "any smilers?"];
+      const puzzles = ["do you love miller?", "dog kisser", "poggers", "chrisp", "each and everything", "do one thing", "any smilers?", "fool here bro?", "southern texas", "crow pro", "magic wrench"];
+      
+      //this can't be changed without changing the image.
+      //multiplying the index by 15 should give us the letter in degrees.
+      const wheelSpaces = ["T", "SKULL1", "H", "M", "S", "Y", "C", "SKULL2", "L", "F", "P", "D", "R", "SKULL3", "W", "K", "B", "J", "N", "SKULL4", "G", "Z", "V", "X"];
+      let curWheelDeg = 0;
+      let weightedWheel = [];
+      const favorMultiplier = 70; //the multiplier for the wheel weight buff
 
       let spinsRemaining = 3;
       let puzzleAnswer = "";
       let correctLetters = [];
       let playerGuess = []; //keep what the player types separate from the correct letters
       let typeIndex = 0;
+      let wheelLetter = "_"; //the letter the wheel landed on
+      let money = 0;
+      const vowelCost = 500;
+      const consonantPayout = 250; 
 
       const totalColumns = 12;
       const puzzleLetterIds = [];
       const puzzle = document.getElementById("puzzle");
 
-      const guessedLetter = document.getElementById("guessed-letter");
+      
       const spinButton = document.getElementById("spin-button");
       const solveButton = document.getElementById("solve-button");
-      
-      const debug = document.getElementById("debug");
+      const wheel = document.getElementById('wheel-container');
+      const moneydiv = document.getElementById('money');      
 
       spinButton.addEventListener('click', spin);
       solveButton.addEventListener('click', checkWin);
+      wheel.addEventListener('transitionend', wheelAnimationFinished);
 
-      //get letter box from  row/col position
+      //get letter box from row/col position
       function getIndex(row, column) {
         return row * totalColumns + column;
       }
+
+      
 
       function generatePuzzle() {
         correctLetters.length = 0;
@@ -124,7 +224,6 @@
         
         //do the math to center the letters on the board
         let splitAnswer = puzzleAnswer.split(' ');
-        console.log("expected rows: " + splitAnswer.length);
         let longest = 0;
         let colOffset = 0;
 
@@ -134,12 +233,7 @@
           }
         });
 
-        console.log("longest line: " + longest);
-
         colOffset = Math.floor((totalColumns / 2) - (longest / 2)); //center horizontally
-        
-        console.log("colOffset = " + colOffset);
-
         let row = Math.floor((4/2) - (splitAnswer.length / 2)); //center vertically
         let col = colOffset;
 
@@ -150,14 +244,15 @@
               continue;
             }
 
-            if(puzzleAnswer[i] == puzzleAnswer[i].match(/[^a-zA-Z]/g)) { //if the character is non alpha add it as solved
+            if(puzzleAnswer[i] == puzzleAnswer[i].match(/[^a-zA-Z]/g)) { //if the character is non alpha add it as a solved box
               let id = "box"+getIndex(row, col);
-              puzzleLetterIds.push(id);
+              //puzzleLetterIds.push(id);
               const curBox = document.getElementById(id);
               
               curBox.classList.remove('emptyBox');
               curBox.classList.add('solvedBox');  
               curBox.textContent = puzzleAnswer[i];
+              col++;
               continue;
             }
 
@@ -175,20 +270,27 @@
           
         
           puzzleAnswer = puzzleAnswer.replaceAll(/[^a-zA-Z]/g, '') //remove all non alphabet characters
-          debug.textContent = puzzleAnswer;
-        }
+          weightedWheel = createWeightedWheel(puzzleAnswer.split(''));
+          //console.log("Weighted Wheel: " + weightedWheel);
+      }
+
       function testLetter(letter) {
         for(let i = 0; i < puzzleAnswer.length; i++) {
-          if (puzzleAnswer[i] == letter) {
+          if (puzzleAnswer[i].toLowerCase() == letter.toLowerCase()) {
             const box = document.getElementById(puzzleLetterIds[i]);
             box.textContent = letter;
+            box.classList.remove('unsolvedBox');
+            box.classList.add('solvedBox');
+            bounceBox(box);
             correctLetters[i] = puzzleAnswer[i]; //keep track of correct letters
+            money += consonantPayout;
+            moneydiv.textContent = "$" + money;
           }
         }
       }
 
       function updateBoard() {
-        console.log("Correct: " + correctLetters.join('') + "  // Player Typed: " + playerGuess.join(''));
+        //console.log("Correct: " + correctLetters.join('') + "  // Player Typed: " + playerGuess.join(''));
         for(let i = 0; i < puzzleAnswer.length; i++) {
           const box = document.getElementById(puzzleLetterIds[i]);
           if (correctLetters[i] != "_") {
@@ -202,16 +304,51 @@
       }
 
       function spin() {
-        const randomNumber = Math.floor(Math.random() * 26);
-        const charCode = randomNumber + 97;
-        const g = String.fromCharCode(charCode);
-        guessedLetter.textContent = g;
-        testLetter(g);
-        checkWin();
+        spinButton.disabled = true;
+        let ind = 0;
+        while(true) {
+          ind = Math.floor(Math.random() * weightedWheel.length);
+          ind = getWheelIndexFromWeightedPoolValue(weightedWheel[ind]);
+          wheelLetter = wheelSpaces[ind];
+          if(correctLetters.includes(wheelLetter.toLocaleLowerCase()) === false) break;
+        }
+        rotateTo(ind * 15);
+      }
+
+      //create a pool that slightly favor letters that are in the answer
+      function createWeightedWheel(answer) {
+        let weightedPool = wheelSpaces.flatMap(char => answer.includes(char.toLowerCase()) ? [char, char, char, char, char, char, char, char] : [char]); //answer.includes(char.toLowerCase()) ? Array(favorMultiplier).fill(char) : [char];
+        return weightedPool;
+      }
+
+      //find the original position of a character in the wheelSpaces array so we can multiply that by 15 to get the position
+      function getWheelIndexFromWeightedPoolValue(val) {
+        for(let i = 0; i < wheelSpaces.length; i++) {
+          if(wheelSpaces[i] == val) {
+            return i;
+          }
+        }
+        return -1;
+      }
+
+      function wheelAnimationFinished() {
+        console.log("spun " + wheelLetter);
+          if(wheelLetter.includes("SKULL")) {
+          //lose a spin
+          } else {
+            testLetter(wheelLetter);
+          }
+          checkWin();
+          spinButton.disabled = false;
+      }
+
+      function rotateTo(newRotation) {
+        rot = (Math.round(curWheelDeg / 360) * 360) + newRotation + 1080;
+        curWheelDeg = rot;
+        wheel.style.transform = `rotate(${rot}deg)`;
       }
 
       function checkWin() {
-
         //combine both letter arrays (letters we got from spinning and letters we typed in) into one
         let combined = [];
         for(let i = 0; i < correctLetters.length; i++) {
@@ -224,7 +361,13 @@
 
         //compare
         if(combined.join('') === puzzleAnswer) {
-          debug.textContent = "you are winner";
+         console.log("winner");
+          //set all boxes to solved
+          puzzleLetterIds.forEach(function(id){
+            const box = document.getElementById(id);
+            box.classList.remove("unsolvedBox");
+            box.classList.add("solvedBox");
+          });
           setTimeout(() => captchaSuccess(), 2000);
         }
       }
@@ -247,9 +390,7 @@
           return;
         } else if(event.key === 'Backspace' || event.code === 'Backspace' || event.keyCode === 8) {
           for(let i = playerGuess.length - 1; i >= 0; i--) {
-            console.log(i);
             if(playerGuess[i] != "_") {
-              console.log("removing " + playerGuess[i]);
               playerGuess[i] = "_";
               break;
             }
@@ -257,15 +398,21 @@
         } else {
           playerGuess[typeIndex] = pressedKey;
         }
-        
-        
-
         updateBoard();
-
       });
+
+
+      function bounceBox(box) {
+          box.style.animation = 'none';
+          box.offsetHeight; /* trigger reflow */
+          box.style.animation = null;   
+          box.style.animation = "letter-box-bounce ease-in-out 250ms 1";
+        }
+
 
       generatePuzzle();
     })(window, document);
   </script>
 </body>
 </html>
+
