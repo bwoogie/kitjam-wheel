@@ -308,7 +308,7 @@
       let typeIndex = 0;
       let wheelLetter = "_"; //the letter the wheel landed on
       
-      let money = 1000;
+      let money = 0;
       const vowelCost = 500;
       const consonantPayout = 250; 
       let vowelMode = false;
@@ -585,7 +585,7 @@
               
               updateBoard();
               hideMessage();
-              vowelMode = false;
+              //vowelMode = false;
               return;
           }
         }
@@ -593,18 +593,6 @@
 
       document.addEventListener("keyup", (event) => {
         console.log("keyup");
-        /*if(event.key === 'Enter' && vowelMode) { //handle mobile vowel entry
-          if(eventInput.value.length == 0) return;
-          if('aeiou'.includes(eventInput.value)) {
-              testLetter(eventInput.value, false);
-              hideMessage();
-              money -= vowelCost;
-              updateMoney();
-              vowelMode = false;
-              updateBoard();
-              return;
-          }
-        }*/
 
         if((event.ctrlKey || event.altKey || event.metaKey) || (event.key.length > 1 && event.key != 'Backspace')) {
           console.log("probably pressed a modifier key...");
@@ -612,18 +600,7 @@
         }
 
         if(vowelMode) {
-          
-          /*const pressedKey = event.key.toLowerCase();
-          console.log("vowel mode: " + pressedKey);
-          if('aeiou'.includes(pressedKey.toLowerCase())) {
-              testLetter(pressedKey, false);
-              hideMessage();
-              money -= vowelCost;
-              updateMoney();
-              vowelMode = false;
-              updateBoard();
-              return;
-          }*/
+          vowelMode=false;
          return;
         } else {
           const pressedKey = event.key.toLowerCase();
