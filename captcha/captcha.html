@@ -544,6 +544,11 @@
       }
 
       document.addEventListener("keyup", (event) => {
+        if(event.key.length > 1 && event.key != 'Backspace') {
+          console.log("probably pressed a modifier key...");
+          return;
+        }
+
         if(vowelMode) {
           const pressedKey = event.key.toLowerCase();
           console.log("vowel mode: " + pressedKey);
