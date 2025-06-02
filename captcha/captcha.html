@@ -25,15 +25,36 @@
       width: 390px;
       height: 300px;
       overflow: hidden;
+      z-index: -99;
     }
 
     /* Your style here... */
  
-    
+    #pointer {
+      position: absolute;
+      width: 78px;
+      height: 42px;
+      top: 155px;
+      left: 155px;
+      background-image: url("pointer.png");
+      z-index: 20;
+    }
+
+    #board {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-image: url("board.png");
+      width: 390px;
+      height: 300px;
+      z-index: 0;
+    }
     #puzzle {
-      
+      position: absolute;
       width: 314px;
-      margin: 16px auto;
+      top: 16px;
+      left: 38px;
+      z-index: 1;
     }
 
     .row {
@@ -61,15 +82,22 @@
     }
 
     .unsolvedBox {
-      background-color: rgb(227, 233, 229);
+      background-color: rgb(248, 248, 248);
     }
 
     .solvedBox {
-      background-color: rgb(239, 248, 186);
+      background-color: rgb(248, 248, 248);
     }
     
     .emptyBox {
       background-color: rgb(24, 102, 24);
+      background-image: url("letterbox.png");
+      
+    }
+
+    .dummyBox {
+      border: none;
+      margin:2px;
     }
 
     @keyframes letter-box-bounce {
@@ -83,15 +111,7 @@
         transform: translateY(-8px);
       }
     }
-/*
-    #wheel-container {
-      overflow: hidden;
-      position: absolute;
-      top: 140px;
-      left: 0px;
-      
-    }
-*/
+
   #wheel-container {
     position: absolute;
     overflow: hidden;
@@ -99,24 +119,11 @@
     width: 390px;
     height: 390px;
     background: url("wheel.png");
-    /*animation: wheel-forever 6000ms infinite;*/
     transition: transform 6s ease;
   }
- /* #wheel-container:before {
-    content: "";
-    position: absolute;
-    width: 290px;
-    height: 290px;
-    top: -50%;
-    left: -50%;
-    z-index: 1;
-    background: url("wheel.png");
-    transform: rotate(30deg);
-}*/
-
+ 
     #wheel-img {
       width: 390px;
-      /*animation: wheel-forever 6000ms infinite;*/
     }
 
     @keyframes wheel-forever {
@@ -128,24 +135,98 @@
       }
     }
 
+    #hud {
+      background-image: url("hud.png");
+      position: absolute;
+      width: 390px;
+      height: 70px;
+      top: 230px;
+    }
+
+    #money-wrap {
+      position: absolute;
+      width: 167px;
+      height: 48px;
+      left: 112px;
+      top: 9px;
+    }
+
+    #money {
+      font-size: 24px;
+      font-family: "Roboto", sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 900;
+      font-style: normal;
+      font-variation-settings: "wdth" 100;
+      color: #FFFFFF;
+      text-align: center;
+      margin-top: 8px;
+    }
+
     button {
-      
+      border: none;
+      cursor: pointer;
+      appearance: none;
+      background-color: inherit;
+      transition: transform .5s ease-in-out;
     }
 
     #spin-button {
       position: absolute;
-      top: 200px;
-    }
-
-    #solve-button {
-      position: absolute;
-      top: 200px;
-      left: 300px;
+      top: 0px;
+      left: 16px;
     }
 
     #vowel-button {
       position: absolute;
-      top: 250px;
+      top: 0px;
+      right: 16px;
+    }
+
+    #solve-button {
+      position: absolute;
+      top: -64px;
+      right: 4px;
+    }
+
+    button:hover{
+        transform: scale(115%);
+    }
+
+    button:active{
+      transform: scale(85%);
+      transition: transform .1s ease-in-out;
+    }
+
+    #event-message-wrap {
+      background: #e42393;
+      background-image: url("message-background.png");
+      border: 4px solid #f1e20a;
+      position: absolute;
+      width: 394px;
+      height: 120px;
+      z-index: 99999999;
+      top: 90px;
+      left: 400px;
+      box-shadow: 0px 5px 10px #000000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform .7s ease-in-out;
+    }
+
+    #event-message-text {
+      font-size: 1.5em;
+      font-family: "Roboto", sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 900;
+      font-style: normal;
+      font-variation-settings: "wdth" 100;
+      color: #FFFFFF;
+      text-align: center;
+      transition: transform .7s ease-in-out;
+      text-transform: uppercase;
+      text-shadow: 3px 3px 1px #000000;
     }
   </style>
 </head>
@@ -153,17 +234,26 @@
 <body>
   <div id="captcha-container">
     <!-- Add your CAPTCHA here: -->
+    <div id="board"></div>
     <div id="puzzle">
       <div id="row0" class="row"></div>
       <div id="row1" class="row"></div>
       <div id="row2" class="row"></div>
       <div id="row3" class="row"></div>
     </div>
-    <div id="money">$0</div>
     <div id="wheel-container"></div>
-    <button id="spin-button" >Spin</button>
-    <button id="solve-button">Solve</button>
-    <button id="vowel-button">Buy a Vowel</button>
+    <div id="pointer"></div>
+    <div id="hud">
+      <div id="money-wrap">
+        <div id="money">$0</div>
+      </div>
+      <button id="spin-button" ><img src="btn_spin.png"/></button>
+      <button id="solve-button"><img src="btn_solve.png"/></button>
+      <button id="vowel-button"><img src="btn_vowel.png"/></button>
+    </div>
+    <div id="event-message-wrap">
+      <div id="event-message-text">Buy A Vowel</div>
+    </div>
   </div>
 
   <script type="text/javascript">
@@ -176,12 +266,13 @@
       // Your CAPTCHA code goes here, we've added a simple example below:
       //document.getElementById('solve').addEventListener('click', () => captchaSuccess());
 
-      //each word will take the whole row so limited to 4 words and max 12 characters each.
+      //each word will take the whole row so limited to 4 words and first and last words are limited to 10 characters, second and third are 12 characters.
       const puzzles = [
         "do you love miller?", "dog kisser", "poggers", "chrisp", "each and everything", "do one thing", 
-        "any smilers? :)", "fool here bro?", "southern texas", "crow pro", "magic wrench", "horse fly", "celebration day, woo!", 
+        "any smilers? :)", "fool here bro?", "southern texas", "crow pro", "magic wrench", "horse fly", "are you bald?", 
         "bare knuckle stuff", "the internet is broken", "have patience", "just wait a moment", "microwave", "moon oil", "milk sponge",
-        
+        "it's a bush", "what's updog", "call me beep me", "big big officer", "ketchup pops", "sixty nine. nice.", "the satoshi method",
+        "do not redeem", "you ain't no gangsta", "disconnect the call", "55 burgers 55 fries", "butterman", "shut up norman"
       ];
       
       //this can't be changed without changing the image.
@@ -211,6 +302,9 @@
       const solveButton = document.getElementById("solve-button");
       const vowelButton = document.getElementById("vowel-button");
 
+      const eventBox = document.getElementById("event-message-wrap");
+      const eventText = document.getElementById("event-message-text");
+
       const wheel = document.getElementById('wheel-container');
       const moneydiv = document.getElementById('money');      
 
@@ -224,7 +318,18 @@
         return row * totalColumns + column;
       }
 
-      
+      function showMessage(message, timeout) {
+        eventText.textContent = message;
+        eventBox.style.transform = "translateX(-404px)";
+        
+        if(timeout != -1) {
+          setTimeout(()=>hideMessage(), timeout);
+        }
+      }
+
+      function hideMessage() {
+        eventBox.style.transform = `translateX(404px)`;
+      }
 
       function generatePuzzle() {
         correctLetters.length = 0;
@@ -234,9 +339,16 @@
         for(let row = 0; row < 4; row++){
           for(let col = 0; col < totalColumns; col++) {
             const newDiv = document.createElement('div');
-            newDiv.id = "box" + getIndex(row, col);
-            newDiv.className = "letterBox";
-            newDiv.classList.add('emptyBox');
+
+            if((row == 0 && col == 0) || (row == 0 && col == totalColumns-1) || (row == 3 && col == 0) || (row == 3 && col == totalColumns - 1)) {
+              newDiv.className = "letterBox";
+              newDiv.classList.add('dummyBox');
+              
+            } else {
+              newDiv.id = "box" + getIndex(row, col);
+              newDiv.className = "letterBox";
+              newDiv.classList.add('emptyBox');
+            }
 
             const rowdiv = document.getElementById("row" + row);
             rowdiv.appendChild(newDiv);
@@ -245,6 +357,8 @@
 
         //choose a puzzle and place it on the board
         puzzleAnswer = puzzles[Math.floor(Math.random() * puzzles.length)];
+
+        console.log(puzzleAnswer);
         
         //do the math to center the letters on the board
         let splitAnswer = puzzleAnswer.split(' ');
@@ -313,11 +427,11 @@
             }
           }
         }
-        checkWin();
+        //checkWin();
       }
 
       function updateMoney() {
-        moneydiv.textContent = "$" + money;
+        moneydiv.textContent = "$" + numberWithCommas(money);
       }
 
       function updateBoard() {
@@ -362,10 +476,16 @@
         return -1;
       }
 
+      function bankrupt() {
+        showMessage("Bankrupt!", 3000);
+        money = 0;
+        updateMoney();
+      }
+
       function wheelAnimationFinished() {
         console.log("spun " + wheelLetter);
           if(wheelLetter.includes("SKULL")) {
-          //lose a spin
+            bankrupt();
           } else {
             testLetter(wheelLetter);
           }
@@ -392,6 +512,7 @@
         //compare
         if(combined.join('') === puzzleAnswer) {
          console.log("winner");
+         showMessage("Winner!", 3000);
           //set all boxes to solved
           puzzleLetterIds.forEach(function(id){
             const box = document.getElementById(id);
@@ -399,15 +520,18 @@
             box.classList.add("solvedBox");
           });
           setTimeout(() => captchaSuccess(), 2000);
+        } else {
+          showMessage("Incorrect", 3000);
         }
       }
 
       function buyVowel() {
-        console.log("vowel btn clicked");
         if(money >= vowelCost) {
+          showMessage("Buy a Vowel", -1);
           vowelMode = true;
           money -= vowelCost;
-          updateMoney();
+        } else {
+          showMessage("Can't afford vowel", 2000);
         }
       }
 
@@ -426,6 +550,8 @@
           if('aeiou'.includes(pressedKey.toLowerCase())) {
               testLetter(pressedKey, false);
               vowelMode = false;
+              hideMessage();
+              updateMoney();
           }
         } else {
           const pressedKey = event.key.toLowerCase();
@@ -457,8 +583,14 @@
           box.style.animation = "letter-box-bounce ease-in-out 250ms 1";
         }
 
+        function numberWithCommas(x) {
+          return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
 
       generatePuzzle();
+
+      
     })(window, document);
   </script>
 </body>
