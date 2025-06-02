@@ -228,6 +228,23 @@
       text-transform: uppercase;
       text-shadow: 3px 3px 1px #000000;
     }
+
+    input.event-textbox{
+      margin: 0 auto;
+      background: #FFFFFF;
+      width: 22px;
+      height: 26px;
+      display: inline-block;
+      border: none;
+      visibility: collapse;
+      font-size: 24px;
+      font-family: "Roboto", sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 900;
+      font-style: normal;
+      font-variation-settings: "wdth" 100;
+      text-transform: uppercase;
+    }
   </style>
 </head>
 
@@ -252,7 +269,10 @@
       <button id="vowel-button"><img src="btn_vowel.png"/></button>
     </div>
     <div id="event-message-wrap">
+      <div style="text-align: center">
       <div id="event-message-text">Buy A Vowel</div>
+      <input type="text" id="event-input" class="event-textbox" maxlength="1"/>
+      </div>
     </div>
   </div>
 
@@ -304,6 +324,7 @@
 
       const eventBox = document.getElementById("event-message-wrap");
       const eventText = document.getElementById("event-message-text");
+      const eventInput = document.getElementById("event-input");
 
       const wheel = document.getElementById('wheel-container');
       const moneydiv = document.getElementById('money');      
@@ -318,10 +339,19 @@
         return row * totalColumns + column;
       }
 
-      function showMessage(message, timeout) {
+      function showMessage(message, timeout, isInput = false) {
         eventText.textContent = message;
         eventBox.style.transform = "translateX(-404px)";
         
+        if(isInput) {
+          setTimeout(()=>{ //wait to show input until transition is finished or bad things happen.
+            eventInput.value = "";
+            eventInput.style.visibility = "visible";
+            eventInput.focus();
+          }, 1000);
+          
+        }
+
         if(timeout != -1) {
           setTimeout(()=>hideMessage(), timeout);
         }
@@ -329,6 +359,7 @@
 
       function hideMessage() {
         eventBox.style.transform = `translateX(404px)`;
+        eventInput.style.visibility = "collapse";
       }
 
       function generatePuzzle() {
@@ -527,9 +558,8 @@
 
       function buyVowel() {
         if(money >= vowelCost) {
-          showMessage("Buy a Vowel", -1);
+          showMessage("Buy a Vowel", -1, true);
           vowelMode = true;
-          money -= vowelCost;
         } else {
           showMessage("Can't afford vowel", 2000);
         }
@@ -555,9 +585,12 @@
           console.log("vowel mode: " + pressedKey);
           if('aeiou'.includes(pressedKey.toLowerCase())) {
               testLetter(pressedKey, false);
-              vowelMode = false;
               hideMessage();
+              money -= vowelCost;
               updateMoney();
+              vowelMode = false;
+              updateBoard();
+              return;
           }
         } else {
           const pressedKey = event.key.toLowerCase();
@@ -595,7 +628,7 @@
 
 
       generatePuzzle();
-
+      updateMoney();
       
     })(window, document);
   </script>
