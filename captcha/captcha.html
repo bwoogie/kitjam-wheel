@@ -570,11 +570,24 @@
           if(correctLetters[i] == "_" && playerGuess[i] == "_") return i;
         }
 
-        return -1; //didn't find a blank space (to write your name).
+        return -1;
       }
 
       document.addEventListener("keyup", (event) => {
         
+        if(event.key === 'Enter' && vowelMode) { //handle mobile vowel entry
+          if(eventInput.value.length == 0) return;
+          if('aeiou'.includes(eventInput.value)) {
+              testLetter(eventInput.value, false);
+              hideMessage();
+              money -= vowelCost;
+              updateMoney();
+              vowelMode = false;
+              updateBoard();
+              return;
+          }
+        }
+
         if((event.ctrlKey || event.altKey || event.metaKey) || (event.key.length > 1 && event.key != 'Backspace')) {
           console.log("probably pressed a modifier key...");
           return;
