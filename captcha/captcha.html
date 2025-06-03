@@ -135,6 +135,14 @@
       }
     }
 
+    @keyframes shake {
+      0% { margin-left: 0px;}
+      33% { margin-left: -16px;}
+      66% { margin-left: 16px;}
+      100% { margin-left: 0px;}
+
+    }
+
     #hud {
       background-image: url("hud.png");
       position: absolute;
@@ -315,6 +323,7 @@
 
       const totalColumns = 12;
       const puzzleLetterIds = [];
+      const captcha = document.getElementById("captcha-container");
       const puzzle = document.getElementById("puzzle");
 
       
@@ -444,8 +453,10 @@
       }
 
       function testLetter(letter, payout = true) {
+        let match = false;
         for(let i = 0; i < puzzleAnswer.length; i++) {
           if (puzzleAnswer[i].toLowerCase() == letter.toLowerCase()) {
+            match = true;
             const box = document.getElementById(puzzleLetterIds[i]);
             box.textContent = letter;
             box.classList.remove('unsolvedBox');
@@ -457,6 +468,9 @@
               updateMoney();
             }
           }
+        }
+        if(match == false) {
+          shakeScreen();
         }
         //checkWin();
       }
@@ -552,6 +566,7 @@
           });
           setTimeout(() => captchaSuccess(), 2000);
         } else {
+          shakeScreen();
           showMessage("Incorrect", 3000);
         }
       }
@@ -630,7 +645,14 @@
           box.offsetHeight; /* trigger reflow */
           box.style.animation = null;   
           box.style.animation = "letter-box-bounce ease-in-out 250ms 1";
-        }
+      }
+
+      function shakeScreen() {
+          captcha.style.animation = 'none';
+          captcha.offsetHeight; /* trigger reflow */
+          captcha.style.animation = null;   
+          captcha.style.animation = "shake ease-in-out 150ms 3";
+      }
 
         function numberWithCommas(x) {
           return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
