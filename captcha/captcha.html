@@ -532,7 +532,7 @@ function testLetter(letter, payout = true) {
 
 function doSolve() {
   if(isMobile()) {
-    let guess = prompt("Please enter your guess.", "");
+    let guess = prompt("Please enter your guess.", "").toLowerCase();
     if(guess != null) {
       if(playerGuess.length > puzzleAnswer.length) { //answer is too long just erase it.
         playerGuess.length = 0;
