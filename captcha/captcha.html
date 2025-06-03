@@ -4,15 +4,14 @@
   <meta charset="utf-8">
   <title>Joel</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
+<!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-  
 
+  <!-- Styles -->
   <style type="text/css">
-    html,
-    body {
+    html, body {
       background: #FFFFFF;
       margin: 0;
       padding: 0;
@@ -28,8 +27,25 @@
       z-index: -99;
     }
 
-    /* Your style here... */
- 
+    /* Layout Elements */
+    #board {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-image: url("board.png");
+      width: 390px;
+      height: 300px;
+      z-index: 0;
+    }
+
+    #puzzle {
+      position: absolute;
+      width: 314px;
+      top: 16px;
+      left: 38px;
+      z-index: 1;
+    }
+
     #pointer {
       position: absolute;
       width: 78px;
@@ -40,107 +56,18 @@
       z-index: 20;
     }
 
-    #board {
+    #wheel-container {
       position: absolute;
-      top: 0;
-      left: 0;
-      background-image: url("board.png");
-      width: 390px;
-      height: 300px;
-      z-index: 0;
-    }
-    #puzzle {
-      position: absolute;
-      width: 314px;
-      top: 16px;
-      left: 38px;
-      z-index: 1;
-    }
-
-    .row {
-      display: block;
-      margin: 0;
-      padding: 0;
-    }
-
-    .letterBox {
-      width: 22px;
-      height: 26px;
-      border: 2px solid black;
-      color: rgb(22, 22, 22);
-      margin: 0px;
-      display: inline-block;
-      text-transform: uppercase;
-      text-align: center;
       overflow: hidden;
-      font-size: 24px;
-      font-family: "Roboto", sans-serif;
-      font-optical-sizing: auto;
-      font-weight: 900;
-      font-style: normal;
-      font-variation-settings: "wdth" 100;
+      top: 140px;
+      width: 390px;
+      height: 390px;
+      background: url("wheel.png");
+      transition: transform 6s ease;
     }
 
-    .unsolvedBox {
-      background-color: rgb(248, 248, 248);
-    }
-
-    .solvedBox {
-      background-color: rgb(248, 248, 248);
-    }
-    
-    .emptyBox {
-      background-color: rgb(24, 102, 24);
-      background-image: url("letterbox.png");
-      
-    }
-
-    .dummyBox {
-      border: none;
-      margin:2px;
-    }
-
-    @keyframes letter-box-bounce {
-      0%, 100% {
-        transform: translateY(0px);
-      }
-      50%{
-        transform: translateY(16px);
-      }
-      75% {
-        transform: translateY(-8px);
-      }
-    }
-
-  #wheel-container {
-    position: absolute;
-    overflow: hidden;
-    top:140px;
-    width: 390px;
-    height: 390px;
-    background: url("wheel.png");
-    transition: transform 6s ease;
-  }
- 
     #wheel-img {
       width: 390px;
-    }
-
-    @keyframes wheel-forever {
-      0% {
-        transform: rotate(0deg);
-      }
-      100% {
-        transform: rotate(1080deg);
-      }
-    }
-
-    @keyframes shake {
-      0% { margin-left: 0px;}
-      33% { margin-left: -16px;}
-      66% { margin-left: 16px;}
-      100% { margin-left: 0px;}
-
     }
 
     #hud {
@@ -162,33 +89,72 @@
     #money {
       font-size: 24px;
       font-family: "Roboto", sans-serif;
-      font-optical-sizing: auto;
       font-weight: 900;
-      font-style: normal;
-      font-variation-settings: "wdth" 100;
       color: #FFFFFF;
       text-align: center;
       margin-top: 8px;
     }
 
+    /* Puzzle Grid */
+    .row {
+      display: block;
+      margin: 0;
+      padding: 0;
+    }
+
+    .letterBox {
+      width: 22px;
+      height: 26px;
+      border: 2px solid black;
+      margin: 0;
+      display: inline-block;
+      text-transform: uppercase;
+      text-align: center;
+      overflow: hidden;
+      font-size: 24px;
+      font-family: "Roboto", sans-serif;
+      font-weight: 900;
+    }
+
+    .unsolvedBox {
+      background-color: rgb(248, 248, 248);
+    }
+
+    .solvedBox {
+      background-color: rgb(248, 248, 248);
+    }
+
+    .emptyBox {
+      background-color: rgb(24, 102, 24);
+      background-image: url("letterbox.png");
+    }
+
+    .dummyBox {
+      border: none;
+      margin: 2px;
+    }
+
+    /* Buttons */
     button {
       border: none;
       cursor: pointer;
-      appearance: none;
       background-color: inherit;
       transition: transform .5s ease-in-out;
     }
 
-    #spin-button {
-      position: absolute;
-      top: 0px;
-      left: 16px;
+    button:hover {
+      transform: scale(115%);
     }
 
-    #vowel-button {
+    button:active {
+      transform: scale(85%);
+      transition: transform .1s ease-in-out;
+    }
+
+    #spin-button {
       position: absolute;
-      top: 0px;
-      right: 16px;
+      top: 0;
+      left: 16px;
     }
 
     #solve-button {
@@ -197,18 +163,15 @@
       right: 4px;
     }
 
-    button:hover{
-        transform: scale(115%);
+    #vowel-button {
+      position: absolute;
+      top: 0;
+      right: 16px;
     }
 
-    button:active{
-      transform: scale(85%);
-      transition: transform .1s ease-in-out;
-    }
-
+    /* Event Message */
     #event-message-wrap {
-      background: #e42393;
-      background-image: url("message-background.png");
+      background: #e42393 url("message-background.png");
       border: 4px solid #f1e20a;
       position: absolute;
       width: 394px;
@@ -226,18 +189,14 @@
     #event-message-text {
       font-size: 1.5em;
       font-family: "Roboto", sans-serif;
-      font-optical-sizing: auto;
       font-weight: 900;
-      font-style: normal;
-      font-variation-settings: "wdth" 100;
       color: #FFFFFF;
       text-align: center;
-      transition: transform .7s ease-in-out;
       text-transform: uppercase;
       text-shadow: 3px 3px 1px #000000;
     }
 
-    input.event-textbox{
+    input.event-textbox {
       margin: 0 auto;
       background: #FFFFFF;
       width: 22px;
@@ -247,18 +206,33 @@
       visibility: collapse;
       font-size: 24px;
       font-family: "Roboto", sans-serif;
-      font-optical-sizing: auto;
       font-weight: 900;
-      font-style: normal;
-      font-variation-settings: "wdth" 100;
       text-transform: uppercase;
+    }
+
+    /* Animations */
+    @keyframes letter-box-bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(16px); }
+      75% { transform: translateY(-8px); }
+    }
+
+    @keyframes wheel-forever {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(1080deg); }
+    }
+
+    @keyframes shake {
+      0% { margin-left: 0; }
+      33% { margin-left: -16px; }
+      66% { margin-left: 16px; }
+      100% { margin-left: 0; }
     }
   </style>
 </head>
 
 <body>
   <div id="captcha-container">
-    <!-- Add your CAPTCHA here: -->
     <div id="board"></div>
     <div id="puzzle">
       <div id="row0" class="row"></div>
@@ -293,374 +267,319 @@
 
       // Your CAPTCHA code goes here, we've added a simple example below:
       //document.getElementById('solve').addEventListener('click', () => captchaSuccess());
+// -------------------- CONSTANTS AND DOM REFERENCES --------------------
+const puzzles = [
+  "do you love miller?", "dog kisser", "poggers", "chrisp", "each and everything", "do one thing", 
+  "any smilers? :)", "fool here bro?", "southern texas", "crow pro", "magic wrench", "horse fly", "are you bald?", 
+  "bare knuckle stuff", "the internet is broken", "have patience", "just wait a moment", "microwave", "moon oil", "milk sponge",
+  "it's a bush", "what's updog", "call me beep me", "big big officer", "ketchup pops", "sixty nine. nice.", "the satoshi method",
+  "do not redeem", "you ain't no gangsta", "disconnect the call", "55 burgers 55 fries", "butterman", "shut up norman"
+];
 
-      //each word will take the whole row so limited to 4 words and first and last words are limited to 10 characters, second and third are 12 characters.
-      const puzzles = [
-        "do you love miller?", "dog kisser", "poggers", "chrisp", "each and everything", "do one thing", 
-        "any smilers? :)", "fool here bro?", "southern texas", "crow pro", "magic wrench", "horse fly", "are you bald?", 
-        "bare knuckle stuff", "the internet is broken", "have patience", "just wait a moment", "microwave", "moon oil", "milk sponge",
-        "it's a bush", "what's updog", "call me beep me", "big big officer", "ketchup pops", "sixty nine. nice.", "the satoshi method",
-        "do not redeem", "you ain't no gangsta", "disconnect the call", "55 burgers 55 fries", "butterman", "shut up norman"
-      ];
-      
-      //this can't be changed without changing the image.
-      //multiplying the index by 15 should give us the letter in degrees.
-      const wheelSpaces = ["T", "SKULL1", "H", "M", "S", "Y", "C", "SKULL2", "L", "F", "P", "D", "R", "SKULL3", "W", "K", "B", "J", "N", "SKULL4", "G", "Z", "V", "X"];
-      let curWheelDeg = 0;
-      let weightedWheel = [];
-      
-      let spinsRemaining = 3;
-      let puzzleAnswer = "";
-      let correctLetters = [];
-      let playerGuess = []; //keep what the player types separate from the correct letters
-      let typeIndex = 0;
-      let wheelLetter = "_"; //the letter the wheel landed on
-      
-      let money = 0;
-      const vowelCost = 500;
-      const consonantPayout = 250; 
-      let vowelMode = false;
+const wheelSpaces = ["T", "SKULL1", "H", "M", "S", "Y", "C", "SKULL2", "L", "F", "P", "D", "R", "SKULL3", "W", "K", "B", "J", "N", "SKULL4", "G", "Z", "V", "X"];
+const totalColumns = 12;
+const vowelCost = 500;
+const consonantPayout = 250;
 
-      const totalColumns = 12;
-      const puzzleLetterIds = [];
-      const captcha = document.getElementById("captcha-container");
-      const puzzle = document.getElementById("puzzle");
+const captcha = document.getElementById("captcha-container");
+const puzzle = document.getElementById("puzzle");
+const spinButton = document.getElementById("spin-button");
+const solveButton = document.getElementById("solve-button");
+const vowelButton = document.getElementById("vowel-button");
+const eventBox = document.getElementById("event-message-wrap");
+const eventText = document.getElementById("event-message-text");
+const eventInput = document.getElementById("event-input");
+const wheel = document.getElementById('wheel-container');
+const moneydiv = document.getElementById('money');
 
-      
-      const spinButton = document.getElementById("spin-button");
-      const solveButton = document.getElementById("solve-button");
-      const vowelButton = document.getElementById("vowel-button");
+// -------------------- STATE VARIABLES --------------------
+let curWheelDeg = 0;
+let weightedWheel = [];
+let spinsRemaining = 3;
+let puzzleAnswer = "";
+let correctLetters = [];
+let playerGuess = [];
+let typeIndex = 0;
+let wheelLetter = "_";
+let money = 0;
+let vowelMode = false;
+const puzzleLetterIds = [];
 
-      const eventBox = document.getElementById("event-message-wrap");
-      const eventText = document.getElementById("event-message-text");
-      const eventInput = document.getElementById("event-input");
+// -------------------- EVENT LISTENERS --------------------
+spinButton.addEventListener('click', spin);
+solveButton.addEventListener('click', doSolve);
+vowelButton.addEventListener('click', buyVowel);
+wheel.addEventListener('transitionend', wheelAnimationFinished);
+eventInput.addEventListener("input", handleEventInput);
+document.addEventListener("keyup", handleKeyUp);
 
-      const wheel = document.getElementById('wheel-container');
-      const moneydiv = document.getElementById('money');      
+// -------------------- EVENT HANDLERS --------------------
+function handleEventInput(event) {
+  if (vowelMode) {
+    const pressedKey = event.target.value.toLowerCase();
+    if ('aeiou'.includes(pressedKey)) {
+      testLetter(pressedKey, false);
+      money -= vowelCost;
+      updateMoney();
+      updateBoard();
+      hideMessage();
+    }
+  }
+}
 
-      spinButton.addEventListener('click', spin);
-      solveButton.addEventListener('click', checkWin);
-      vowelButton.addEventListener('click', buyVowel);
-      wheel.addEventListener('transitionend', wheelAnimationFinished);
+function handleKeyUp(event) {
+  if ((event.ctrlKey || event.altKey || event.metaKey) || (event.key.length > 1 && event.key !== 'Backspace')) return;
+  if (vowelMode) {
+    vowelMode = false;
+    return;
+  }
 
-      //get letter box from row/col position
-      function getIndex(row, column) {
-        return row * totalColumns + column;
+  const pressedKey = event.key.toLowerCase();
+  typeIndex = getNextBlankSpace();
+
+  if (pressedKey.match(/[^a-zA-Z]/g)) return;
+  if (event.key === 'Backspace') {
+    for (let i = playerGuess.length - 1; i >= 0; i--) {
+      if (playerGuess[i] !== "_") {
+        playerGuess[i] = "_";
+        break;
       }
+    }
+  } else {
+    playerGuess[typeIndex] = pressedKey;
+  }
+  updateBoard();
+}
 
-      function showMessage(message, timeout, isInput = false) {
-        eventText.textContent = message;
-        eventBox.style.transform = "translateX(-404px)";
-        
-        if(isInput) {
-          setTimeout(()=>{ //wait to show input until transition is finished or bad things happen.
-            eventInput.value = "";
-            eventInput.style.visibility = "visible";
-            eventInput.focus();
-          }, 1000);
-          
-        }
+// -------------------- UI/ANIMATION UTILITIES --------------------
+function showMessage(message, timeout, isInput = false) {
+  eventText.textContent = message;
+  eventBox.style.transform = "translateX(-404px)";
+  if (isInput) {
+    setTimeout(() => {
+      eventInput.value = "";
+      eventInput.style.visibility = "visible";
+      eventInput.focus();
+    }, 1000);
+  }
+  if (timeout !== -1) setTimeout(() => hideMessage(), timeout);
+}
 
-        if(timeout != -1) {
-          setTimeout(()=>hideMessage(), timeout);
-        }
+function hideMessage() {
+  eventBox.style.transform = `translateX(404px)`;
+  eventInput.style.visibility = "collapse";
+}
+
+function bounceBox(box) {
+  box.style.animation = 'none';
+  box.offsetHeight;
+  box.style.animation = null;
+  box.style.animation = "letter-box-bounce ease-in-out 250ms 1";
+}
+
+function shakeScreen() {
+  captcha.style.animation = 'none';
+  captcha.offsetHeight;
+  captcha.style.animation = null;
+  captcha.style.animation = "shake ease-in-out 150ms 3";
+}
+
+function numberWithCommas(x) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+// -------------------- GAME LOGIC --------------------
+function generatePuzzle() {
+  correctLetters.length = 0;
+  playerGuess.length = 0;
+
+  for (let row = 0; row < 4; row++) {
+    for (let col = 0; col < totalColumns; col++) {
+      const newDiv = document.createElement('div');
+      if ((row === 0 && col === 0) || (row === 0 && col === totalColumns - 1) || (row === 3 && col === 0) || (row === 3 && col === totalColumns - 1)) {
+        newDiv.className = "letterBox dummyBox";
+      } else {
+        newDiv.id = "box" + getIndex(row, col);
+        newDiv.className = "letterBox emptyBox";
       }
+      document.getElementById("row" + row).appendChild(newDiv);
+    }
+  }
 
-      function hideMessage() {
-        eventBox.style.transform = `translateX(404px)`;
-        eventInput.style.visibility = "collapse";
-      }
+  puzzleAnswer = puzzles[Math.floor(Math.random() * puzzles.length)];
+  let splitAnswer = puzzleAnswer.split(' ');
+  let longest = Math.max(...splitAnswer.map(word => word.length));
+  let colOffset = Math.floor((totalColumns / 2) - (longest / 2));
+  let row = Math.floor((4 / 2) - (splitAnswer.length / 2));
+  let col = colOffset;
 
-      function generatePuzzle() {
-        correctLetters.length = 0;
-        playerGuess.length = 0;
+  console.log(puzzleAnswer);
 
-        //build empty puzzle board
-        for(let row = 0; row < 4; row++){
-          for(let col = 0; col < totalColumns; col++) {
-            const newDiv = document.createElement('div');
+  for (let i = 0; i < puzzleAnswer.length; i++) {
+    if (puzzleAnswer[i] === " ") {
+      row++;
+      col = colOffset;
+      continue;
+    }
+    if (puzzleAnswer[i].match(/[^a-zA-Z]/)) {
+      const id = "box" + getIndex(row, col);
+      const curBox = document.getElementById(id);
+      curBox.classList.remove('emptyBox');
+      curBox.classList.add('solvedBox');
+      curBox.textContent = puzzleAnswer[i];
+      col++;
+      continue;
+    }
+    correctLetters.push("_");
+    playerGuess.push("_");
+    const id = "box" + getIndex(row, col);
+    puzzleLetterIds.push(id);
+    const curBox = document.getElementById(id);
+    curBox.classList.remove('emptyBox');
+    curBox.classList.add('unsolvedBox');
+    col++;
+  }
+  puzzleAnswer = puzzleAnswer.replaceAll(/[^a-zA-Z]/g, '');
+  weightedWheel = createWeightedWheel(puzzleAnswer.split(''));
+}
 
-            if((row == 0 && col == 0) || (row == 0 && col == totalColumns-1) || (row == 3 && col == 0) || (row == 3 && col == totalColumns - 1)) {
-              newDiv.className = "letterBox";
-              newDiv.classList.add('dummyBox');
-              
-            } else {
-              newDiv.id = "box" + getIndex(row, col);
-              newDiv.className = "letterBox";
-              newDiv.classList.add('emptyBox');
-            }
+function spin() {
+  spinButton.disabled = true;
+  let ind;
+  while (true) {
+    ind = Math.floor(Math.random() * weightedWheel.length);
+    ind = getWheelIndexFromWeightedPoolValue(weightedWheel[ind]);
+    wheelLetter = wheelSpaces[ind];
+    if (!correctLetters.includes(wheelLetter.toLowerCase())) break;
+  }
+  rotateTo(ind * 15);
+}
 
-            const rowdiv = document.getElementById("row" + row);
-            rowdiv.appendChild(newDiv);
-          }
-        }
+function buyVowel() {
+  if (money >= vowelCost) {
+    showMessage("Buy a Vowel", -1, true);
+    vowelMode = true;
+  } else {
+    showMessage("Can't afford vowel", 2000);
+  }
+}
 
-        //choose a puzzle and place it on the board
-        puzzleAnswer = puzzles[Math.floor(Math.random() * puzzles.length)];
-
-        console.log(puzzleAnswer);
-        
-        //do the math to center the letters on the board
-        let splitAnswer = puzzleAnswer.split(' ');
-        let longest = 0;
-        let colOffset = 0;
-
-        splitAnswer.forEach(function(line){
-          if(line.length > longest) {
-            longest = line.length;
-          }
-        });
-
-        colOffset = Math.floor((totalColumns / 2) - (longest / 2)); //center horizontally
-        let row = Math.floor((4/2) - (splitAnswer.length / 2)); //center vertically
-        let col = colOffset;
-
-          for(let i = 0; i < puzzleAnswer.length; i++) {
-            if(puzzleAnswer[i] == " ") { //if the character is a space drop to the next row
-              row++;
-              col = colOffset;
-              continue;
-            }
-
-            if(puzzleAnswer[i] == puzzleAnswer[i].match(/[^a-zA-Z]/g)) { //if the character is non alpha add it as a solved box
-              let id = "box"+getIndex(row, col);
-              //puzzleLetterIds.push(id);
-              const curBox = document.getElementById(id);
-              
-              curBox.classList.remove('emptyBox');
-              curBox.classList.add('solvedBox');  
-              curBox.textContent = puzzleAnswer[i];
-              col++;
-              continue;
-            }
-
-            correctLetters.push("_");
-            playerGuess.push("_");
-
-            let id = "box"+getIndex(row, col);
-            puzzleLetterIds.push(id);
-            const curBox = document.getElementById(id);
-            
-            curBox.classList.remove('emptyBox');
-            curBox.classList.add('unsolvedBox');
-            col++;
-          }
-          
-        
-          puzzleAnswer = puzzleAnswer.replaceAll(/[^a-zA-Z]/g, '') //remove all non alphabet characters
-          weightedWheel = createWeightedWheel(puzzleAnswer.split(''));
-          //console.log("Weighted Wheel: " + weightedWheel);
-      }
-
-      function testLetter(letter, payout = true) {
-        let match = false;
-        for(let i = 0; i < puzzleAnswer.length; i++) {
-          if (puzzleAnswer[i].toLowerCase() == letter.toLowerCase()) {
-            match = true;
-            const box = document.getElementById(puzzleLetterIds[i]);
-            box.textContent = letter;
-            box.classList.remove('unsolvedBox');
-            box.classList.add('solvedBox');
-            bounceBox(box);
-            correctLetters[i] = puzzleAnswer[i]; //keep track of correct letters
-            if(payout == true) {
-              money += consonantPayout;
-              updateMoney();
-            }
-          }
-        }
-        if(match == false) {
-          shakeScreen();
-        }
-        //checkWin();
-      }
-
-      function updateMoney() {
-        moneydiv.textContent = "$" + numberWithCommas(money);
-      }
-
-      function updateBoard() {
-        //console.log("Correct: " + correctLetters.join('') + "  // Player Typed: " + playerGuess.join(''));
-        for(let i = 0; i < puzzleAnswer.length; i++) {
-          const box = document.getElementById(puzzleLetterIds[i]);
-          if (correctLetters[i] != "_") {
-            box.textContent = correctLetters[i];
-          } else if(playerGuess[i] != "_") {
-            box.textContent = playerGuess[i];
-          } else {
-            box.textContent = "";
-          }
-        }
-      }
-
-      function spin() {
-        spinButton.disabled = true;
-        let ind = 0;
-        while(true) {
-          ind = Math.floor(Math.random() * weightedWheel.length);
-          ind = getWheelIndexFromWeightedPoolValue(weightedWheel[ind]);
-          wheelLetter = wheelSpaces[ind];
-          if(correctLetters.includes(wheelLetter.toLocaleLowerCase()) === false) break;
-        }
-        rotateTo(ind * 15);
-      }
-
-      //create a pool that slightly favor letters that are in the answer
-      function createWeightedWheel(answer) {
-        let weightedPool = wheelSpaces.flatMap(char => answer.includes(char.toLowerCase()) ? [char, char, char, char, char, char, char, char] : [char]); //answer.includes(char.toLowerCase()) ? Array(favorMultiplier).fill(char) : [char];
-        return weightedPool;
-      }
-
-      //find the original position of a character in the wheelSpaces array so we can multiply that by 15 to get the position
-      function getWheelIndexFromWeightedPoolValue(val) {
-        for(let i = 0; i < wheelSpaces.length; i++) {
-          if(wheelSpaces[i] == val) {
-            return i;
-          }
-        }
-        return -1;
-      }
-
-      function bankrupt() {
-        showMessage("Bankrupt!", 3000);
-        money = 0;
+function testLetter(letter, payout = true) {
+  let match = false;
+  for (let i = 0; i < puzzleAnswer.length; i++) {
+    if (puzzleAnswer[i].toLowerCase() === letter.toLowerCase()) {
+      match = true;
+      const box = document.getElementById(puzzleLetterIds[i]);
+      box.textContent = letter;
+      box.classList.remove('unsolvedBox');
+      box.classList.add('solvedBox');
+      bounceBox(box);
+      correctLetters[i] = puzzleAnswer[i];
+      if (payout) {
+        money += consonantPayout;
         updateMoney();
       }
+    }
+  }
+  if (!match) shakeScreen();
+}
 
-      function wheelAnimationFinished() {
-        console.log("spun " + wheelLetter);
-          if(wheelLetter.includes("SKULL")) {
-            bankrupt();
-          } else {
-            testLetter(wheelLetter);
-          }
-          spinButton.disabled = false;
+function doSolve() {
+  if(isMobile()) {
+    let guess = prompt("Please enter your guess.", "");
+    if(guess != null) {
+      if(playerGuess.length > puzzleAnswer.length) {
+        playerGuess.length = 0;
+        checkWin();
+        return;
       }
+      playerGuess = guess.split('');
+      updateBoard();
+      checkWin();
+    }
+  } else {
+    checkWin();
+  }
+}
 
-      function rotateTo(newRotation) {
-        rot = (Math.round(curWheelDeg / 360) * 360) + newRotation + 1080;
-        curWheelDeg = rot;
-        wheel.style.transform = `rotate(${rot}deg)`;
-      }
+function checkWin() {
+  const combined = correctLetters.map((c, i) => c !== "_" ? c : playerGuess[i]).join('');
+  if (combined === puzzleAnswer) {
+    showMessage("Winner!", 3000);
+    puzzleLetterIds.forEach(id => {
+      const box = document.getElementById(id);
+      box.classList.remove("unsolvedBox");
+      box.classList.add("solvedBox");
+    });
+    setTimeout(() => captchaSuccess(), 2000);
+  } else {
+    shakeScreen();
+    showMessage("Incorrect", 3000);
+    playerGuess.length = 0;
+  }
+}
 
-      function checkWin() {
-        //combine both letter arrays (letters we got from spinning and letters we typed in) into one
-        let combined = [];
-        for(let i = 0; i < correctLetters.length; i++) {
-          if(correctLetters[i] != "_") {
-            combined.push(correctLetters[i]);
-          }else if(playerGuess[i] != "_") {
-            combined.push(playerGuess[i]);
-          }
-        }
+function updateBoard() {
+  for (let i = 0; i < puzzleAnswer.length; i++) {
+    const box = document.getElementById(puzzleLetterIds[i]);
+    box.textContent = correctLetters[i] !== "_" ? correctLetters[i] : (playerGuess[i] !== "_" ? playerGuess[i] : "");
+  }
+}
 
-        //compare
-        if(combined.join('') === puzzleAnswer) {
-         console.log("winner");
-         showMessage("Winner!", 3000);
-          //set all boxes to solved
-          puzzleLetterIds.forEach(function(id){
-            const box = document.getElementById(id);
-            box.classList.remove("unsolvedBox");
-            box.classList.add("solvedBox");
-          });
-          setTimeout(() => captchaSuccess(), 2000);
-        } else {
-          shakeScreen();
-          showMessage("Incorrect", 3000);
-        }
-      }
+function updateMoney() {
+  moneydiv.textContent = "$" + numberWithCommas(money);
+}
 
-      function buyVowel() {
-        if(money >= vowelCost) {
-          showMessage("Buy a Vowel", -1, true);
-          vowelMode = true;
-        } else {
-          showMessage("Can't afford vowel", 2000);
-        }
-      }
+function wheelAnimationFinished() {
+  if (wheelLetter.includes("SKULL")) {
+    bankrupt();
+  } else {
+    testLetter(wheelLetter);
+  }
+  spinButton.disabled = false;
+}
 
-      function getNextBlankSpace() {
-        for(let i = 0; i < puzzleAnswer.length; i++) {
-          if(correctLetters[i] == "_" && playerGuess[i] == "_") return i;
-        }
+function bankrupt() {
+  showMessage("Bankrupt!", 3000);
+  money = 0;
+  updateMoney();
+}
 
-        return -1;
-      }
+// -------------------- UTILITY FUNCTIONS --------------------
+function getIndex(row, column) {
+  return row * totalColumns + column;
+}
 
-      eventInput.addEventListener("input", function(event) {
-        console.log("text box listener");
-        if(vowelMode) {
-          const pressedKey = event.target.value.toLowerCase();
-          //console.log("vowel mode: " + pressedKey);
-          if('aeiou'.includes(pressedKey.toLowerCase())) {
-              testLetter(pressedKey, false);
-              money -= vowelCost;
-              updateMoney();
-              
-              updateBoard();
-              hideMessage();
-              //vowelMode = false;
-              return;
-          }
-        }
-      });
+function getNextBlankSpace() {
+  for (let i = 0; i < puzzleAnswer.length; i++) {
+    if (correctLetters[i] === "_" && playerGuess[i] === "_") return i;
+  }
+  return -1;
+}
 
-      document.addEventListener("keyup", (event) => {
-        console.log("keyup");
+function createWeightedWheel(answer) {
+  return wheelSpaces.flatMap(char => answer.includes(char.toLowerCase()) ? Array(8).fill(char) : [char]);
+}
 
-        if((event.ctrlKey || event.altKey || event.metaKey) || (event.key.length > 1 && event.key != 'Backspace')) {
-          console.log("probably pressed a modifier key...");
-          return;
-        }
+function getWheelIndexFromWeightedPoolValue(val) {
+  return wheelSpaces.indexOf(val);
+}
 
-        if(vowelMode) {
-          vowelMode=false;
-         return;
-        } else {
-          const pressedKey = event.key.toLowerCase();
-          typeIndex = getNextBlankSpace();
+function isMobile() {
+  const regex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+  return regex.test(navigator.userAgent);
+}
 
-          if(pressedKey.match(/[^a-zA-Z]/g) != null) { //must be a letter
-            //TODO animate invalid key?
-            console.log("must be a letter. ");
-            return;
-          } else if(event.key === 'Backspace' || event.code === 'Backspace' || event.keyCode === 8) {
-            for(let i = playerGuess.length - 1; i >= 0; i--) {
-              if(playerGuess[i] != "_") {
-                playerGuess[i] = "_";
-                break;
-              }
-            }
-          } else {
-            playerGuess[typeIndex] = pressedKey;
-          }
-          updateBoard();
-        }
-      });
+function rotateTo(newRotation) {
+  const rot = (Math.round(curWheelDeg / 360) * 360) + newRotation + 1080;
+  curWheelDeg = rot;
+  wheel.style.transform = `rotate(${rot}deg)`;
+}
 
+// -------------------- INITIALIZATION --------------------
+generatePuzzle();
+updateMoney();
 
-      function bounceBox(box) {
-          box.style.animation = 'none';
-          box.offsetHeight; /* trigger reflow */
-          box.style.animation = null;   
-          box.style.animation = "letter-box-bounce ease-in-out 250ms 1";
-      }
-
-      function shakeScreen() {
-          captcha.style.animation = 'none';
-          captcha.offsetHeight; /* trigger reflow */
-          captcha.style.animation = null;   
-          captcha.style.animation = "shake ease-in-out 150ms 3";
-      }
-
-        function numberWithCommas(x) {
-          return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        }
-
-
-      generatePuzzle();
-      updateMoney();
       
     })(window, document);
   </script>
