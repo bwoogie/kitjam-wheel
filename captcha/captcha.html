@@ -348,7 +348,7 @@ function handleKeyUp(event) {
 
     if(pressedKey.match(/[^a-zA-Z]/g) != null) { //must be a letter
       //TODO animate invalid key?
-      console.log("must be a letter. ");
+      console.log("must be a letter.");
       return;
     } else if(event.key === 'Backspace' || event.code === 'Backspace' || event.keyCode === 8) {
       for(let i = playerGuess.length - 1; i >= 0; i--) {
@@ -529,7 +529,12 @@ function checkWin() {
   } else {
     shakeScreen();
     showMessage("Incorrect", 3000);
-    playerGuess.length = 0;
+    setTimeout(() => {
+      playerGuess.length = 0;
+      playerGuess = Array(8).fill("_");
+      updateBoard();
+    }, 3000);
+    
   }
 }
 
