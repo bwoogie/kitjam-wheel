@@ -328,27 +328,40 @@ function handleEventInput(event) {
 }
 
 function handleKeyUp(event) {
-  if ((event.ctrlKey || event.altKey || event.metaKey) || (event.key.length > 1 && event.key !== 'Backspace')) return;
-  if (vowelMode) {
-    vowelMode = false;
-    return;
+  if(event.key.length > 1 && event.key != 'Backspace') {
+    console.log("probably pressed a modifier key...");
+  return;
   }
 
-  const pressedKey = event.key.toLowerCase();
-  typeIndex = getNextBlankSpace();
-
-  if (pressedKey.match(/[^a-zA-Z]/g)) return;
-  if (event.key === 'Backspace') {
-    for (let i = playerGuess.length - 1; i >= 0; i--) {
-      if (playerGuess[i] !== "_") {
-        playerGuess[i] = "_";
-        break;
-      }
+  if(vowelMode) {
+    const pressedKey = event.key.toLowerCase();
+    console.log("vowel mode: " + pressedKey);
+    if('aeiou'.includes(pressedKey.toLowerCase())) {
+        testLetter(pressedKey, false);
+        vowelMode = false;
+        hideMessage();
+        updateMoney();
     }
   } else {
-    playerGuess[typeIndex] = pressedKey;
+    const pressedKey = event.key.toLowerCase();
+    typeIndex = getNextBlankSpace();
+
+    if(pressedKey.match(/[^a-zA-Z]/g) != null) { //must be a letter
+      //TODO animate invalid key?
+      console.log("must be a letter. ");
+      return;
+    } else if(event.key === 'Backspace' || event.code === 'Backspace' || event.keyCode === 8) {
+      for(let i = playerGuess.length - 1; i >= 0; i--) {
+        if(playerGuess[i] != "_") {
+          playerGuess[i] = "_";
+          break;
+        }
+      }
+    } else {
+      playerGuess[typeIndex] = pressedKey;
+    }
+    updateBoard();
   }
-  updateBoard();
 }
 
 // -------------------- UI/ANIMATION UTILITIES --------------------
@@ -488,11 +501,12 @@ function doSolve() {
   if(isMobile()) {
     let guess = prompt("Please enter your guess.", "");
     if(guess != null) {
-      if(playerGuess.length > puzzleAnswer.length) {
+      if(playerGuess.length > puzzleAnswer.length) { //answer is too long just erase it.
         playerGuess.length = 0;
         checkWin();
         return;
       }
+      guess = guess.replaceAll(" ", "");
       playerGuess = guess.split('');
       updateBoard();
       checkWin();
