@@ -306,11 +306,12 @@
 // -------------------- CONSTANTS AND DOM REFERENCES --------------------
 const puzzles = [
   "do you love miller?", "dog kisser", "poggers", "chrisp", "each and everything", "do one thing", 
-  "any smilers? :)", "fool here bro?", "southern texas", "crow pro", "magic wrench", "horse fly", "are you bald?", 
+  "any smilers?", "fool here bro?", "southern texas", "crow pro", "magic wrench", "horse fly", "are you bald?", 
   "bare knuckle stuff", "the internet is broken", "have patience", "just wait a moment", "macrowave", "moon oil", "milk sponge",
-  "it's a bush", "what's updog", "call me beep me", "big big officer", "ketchup pops", "sixty nine. nice.", "the satoshi method",
-  "do not redeem", "you ain't no gangsta", "disconnect the call", "55 burgers 55 fries", "butterman", "shut up norman", "i am a human",
-  "i am a robot", "pancakes", "joel", "1,365 years old", "fish tycoon", "purple pig"
+  "it's a bush", "what's updog", "big big officer", "cold ketchup", "warm ketchup", "mayonnaise", "the satoshi method",
+  "do not redeem", "you ain't no gangsta", "disconnect the call", "butterman", "crows lift weights", "data file", "pancakes",
+  "joel", "fish tycoon", "purple pig", "you matter", "ms. valerie frizzle", "happy painting god bless", "never share wifi password",
+  "pardon the christmas turkey", "barrel of orange juice", ""
 ];
 
 const wheelSpaces = ["T", "SKULL1", "H", "M", "S", "Y", "C", "SKULL2", "L", "F", "P", "D", "R", "SKULL3", "W", "K", "B", "J", "N", "SKULL4", "G", "Z", "V", "X"];
@@ -570,7 +571,7 @@ function checkWin() {
     showMessage("Incorrect", 3000);
     setTimeout(() => {
       playerGuess.length = 0;
-      playerGuess = Array(8).fill("_");
+      playerGuess = Array(puzzleAnswer.length).fill("_");
       updateBoard();
     }, 3000);
     
